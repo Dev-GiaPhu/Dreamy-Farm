@@ -120,6 +120,14 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Input & handlers
+
+    public void OnclickSlot1(){handItem = 0;}
+    public void OnclickSlot2(){handItem = 1;}
+    public void OnclickSlot3(){handItem = 2;}
+    public void OnclickSlot4(){handItem = 3;}
+    public void OnclickSlot5(){handItem = 4;}
+    public void OnclickSlot6(){handItem = 5;}
+    
     void HandleSlotSelection()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -160,6 +168,7 @@ public class PlayerController : MonoBehaviour
                 it = Slot6.GetComponent<InventorySlotUI>().type;
                 break;
             default:
+                it = ItemType.Null;
                 break;
         }
     }
@@ -190,13 +199,13 @@ public class PlayerController : MonoBehaviour
         {
             if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !OpenPackBack && !isWaterCaning)
             {
-                switch (handItem)
+                switch (it)
                 {
-                    case 0: StartCoroutine(DoSword()); break;
-                    case 1: StartCoroutine(DoPickaxe()); break;
-                    case 2: StartCoroutine(DoAxe()); break;
-                    case 4: StartCoroutine(DoShovel()); break;
-                    case 5:
+                    case ItemType.Sword: StartCoroutine(DoSword()); break;
+                    case ItemType.Pickaxe: StartCoroutine(DoPickaxe()); break;
+                    case ItemType.Axe: StartCoroutine(DoAxe()); break;
+                    case ItemType.Shovel: StartCoroutine(DoShovel()); break;
+                    case ItemType.CanWater:
                         if (animator != null && !isWaterCaning)
                         {
                             animator.SetTrigger("Can Water");
@@ -207,7 +216,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.J) || handItem != 5)
+        if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.J) || it != ItemType.CanWater)
         {
             if (isWaterCaning)
             {
@@ -220,7 +229,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !OpenPackBack)
             {
-                if (handItem == 3)
+                if (it == ItemType.FishingRod)
                     StartCoroutine(DoFishing());
             }
         }
@@ -229,13 +238,13 @@ public class PlayerController : MonoBehaviour
         {
             if (!OpenPackBack)
             {
+                PackBackUI.transform.position = new Vector3(610, 540, 0);
                 OpenPackBack = true;
-                PackBackUI.SetActive(true);
             }
             else
             {
+                PackBackUI.transform.position = new Vector3(-9040, 540, 0);
                 OpenPackBack = false;
-                PackBackUI.SetActive(false);
             }
         }
 
@@ -268,10 +277,9 @@ public class PlayerController : MonoBehaviour
         var hitbox = GetComponentInChildren<PlayerHitBox>();
         if (hitbox != null)
             hitbox.EnableHitBox();
-        yield return new WaitForSeconds(0.6f);
-        if (hitbox != null)
-            hitbox.DisableHitBox();
+        yield return new WaitForSeconds(1f);
         isSwording = false;
+        Debug.Log("Attack Done.");
     }
 
     IEnumerator DoPickaxe()
@@ -339,7 +347,7 @@ public class PlayerController : MonoBehaviour
         Color fishColor = Color.black;
         while (fishColor == Color.black)
         {
-            fishColor = Random.ColorHSV(0.5f, 1f, 0.5f, 1f, 0.5f, 1f);
+            fishColor = Random.ColorHSV(0.8f, 1f, 0.8f, 1f, 0.8f, 1f);
         }
 
         if (isRight && exFishRightRenderer != null)

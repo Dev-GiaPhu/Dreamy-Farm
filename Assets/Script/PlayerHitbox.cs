@@ -1,9 +1,5 @@
 using UnityEngine;
-
-/// <summary>
-/// PlayerHitBox — quản lý collider đánh của người chơi.
-/// Collider luôn tồn tại trên player, chỉ enable khi swing để tránh trừ nhiều lần.
-/// </summary>
+using System.Collections;
 
 public class PlayerHitBox : MonoBehaviour
 {
@@ -13,14 +9,10 @@ public class PlayerHitBox : MonoBehaviour
 
     void Awake()
     {
-        // Lấy collider và tắt nó lúc bắt đầu
         hitCollider = GetComponent<BoxCollider2D>();
         hitCollider.enabled = false;
     }
 
-    /// <summary>
-    /// Bật collider khi bắt đầu swing, reset flag
-    /// </summary>
     public void EnableHitBox()
     {
         hitCollider.enabled = true;
@@ -43,27 +35,33 @@ public class PlayerHitBox : MonoBehaviour
         if (hasHitThisSwing) return;
 
         // Swing Axe (handItem == 2) đánh Tree
-        if (player.handItem == 2 && trigger.CompareTag("Tree"))
+        if (player.it == ItemType.Axe && trigger.CompareTag("Tree"))
         {
             Tree tree = trigger.GetComponentInParent<Tree>();
             if (tree != null)
             {
                 tree.TakeHit();
                 Debug.Log("Cây bị chặt!");
-                hasHitThisSwing = true;
+                StartCoroutine(WaitOff());
             }
         }
 
         // Swing Sword (handItem == 0) đánh Cow
-        if (player.handItem == 0 && trigger.CompareTag("Cow"))
+        if (player.it == ItemType.Sword && trigger.CompareTag("Cow"))
         {
             CowController cow = trigger.GetComponentInParent<CowController>();
             if (cow != null)
             {
                 cow.TakeHit();
                 Debug.Log("Con bò bị đánh!");
-                hasHitThisSwing = true;
+                StartCoroutine(WaitOff());
             }
         }
+    }
+    IEnumerator WaitOff()
+    {
+        hasHitThisSwing = true;
+        yield return new WaitForSeconds(1f);
+        hasHitThisSwing = false;
     }
 }

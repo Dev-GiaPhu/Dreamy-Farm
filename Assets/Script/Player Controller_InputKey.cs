@@ -1,16 +1,7 @@
 using UnityEngine;
 
-/// <summary>
-/// PlayerController — quản lý di chuyển, hành động (sword/pickaxe/axe/fishing/jump) và UI slot.
-/// Fishing: tự gán collider con nếu chưa gán, check Tilemap water bằng Tilemap API (không cần collider trên tilemap).
-/// </summary>
 public class PlayerController_InputKey : MonoBehaviour
 {
-    public KeyCode moveUpKey = KeyCode.W;
-    public KeyCode moveDownKey = KeyCode.S;
-    public KeyCode moveLeftKey = KeyCode.A;
-    public KeyCode moveRightKey = KeyCode.D;
-
     public Animator animator;
 
     public float speed = 3f;
@@ -26,27 +17,27 @@ public class PlayerController_InputKey : MonoBehaviour
 
         rb.linearVelocity = Vector2.zero;
 
-        if (Input.GetKey(moveUpKey))
+        if (Input.GetKey(KeyCode.W))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y + speed).normalized;
             Debug.Log("Up key pressed");
         }
-        if (Input.GetKey(moveDownKey))
+        if (Input.GetKey(KeyCode.S))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y - speed).normalized;
             Debug.Log("Down key pressed");
         }
-        if (Input.GetKey(moveLeftKey))
+        if (Input.GetKey(KeyCode.A))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x - speed, rb.linearVelocity.y).normalized;
             Debug.Log("Left key pressed");
-            transform.localScale = new Vector3(-1, 1, 1); // Flip sprite sang trái
+            transform.localScale = new Vector3(-1, 1, 1);
         }
-        if (Input.GetKey(moveRightKey))
+        if (Input.GetKey(KeyCode.D))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x + speed, rb.linearVelocity.y).normalized;
             Debug.Log("Right key pressed");
-            transform.localScale = new Vector3(1, 1, 1); // Flip sprite sang phải
+            transform.localScale = new Vector3(1, 1, 1);
         }
     }
 }

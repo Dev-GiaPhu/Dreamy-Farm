@@ -227,7 +227,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3354347, y: 0.29785156}
+  m_Size: {x: 1.3354347, y: 0.5632273}
   m_EdgeRadius: 0
 --- !u!114 &6726334758718017996
 MonoBehaviour:
@@ -587,6 +587,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c72f755578c4b19a039d19ebfad6da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  it: 0
   handItem: 0
   Speed: 3
   Heath: 100
@@ -598,8 +599,14 @@ MonoBehaviour:
   isShoveling: 0
   isWaterCaning: 0
   OpenPackBack: 0
-  Backpack: 0
   PackBackUI: {fileID: 0}
+  SelectIcon: {fileID: 0}
+  Slot1: {fileID: 0}
+  Slot2: {fileID: 0}
+  Slot3: {fileID: 0}
+  Slot4: {fileID: 0}
+  Slot5: {fileID: 0}
+  Slot6: {fileID: 0}
   RightAreaFish: {fileID: 6362882973560849920}
   LeftAreaFish: {fileID: 268520174584985911}
   ExFishRight: {fileID: 4994126410420866008}

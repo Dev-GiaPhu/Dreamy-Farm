@@ -17,6 +17,9 @@ public class InventorySlotUI : MonoBehaviour
     public ItemType type;
     public Image icon;
     public TMP_Text amountText;
+    float xs = 0f;
+    float maxXs = 0.2f ;
+    public Vector3 tempVector = new Vector3(0,0,0);
 
     private void Awake()
     {
@@ -77,5 +80,19 @@ public class InventorySlotUI : MonoBehaviour
         icon.color = new Color(1f, 1f, 1f, 0f);
         icon.enabled = false;
         amountText.text = "";
+    }
+
+    public void ClickUISlot()
+    {
+        while(Input.GetMouseButtonDown(0) && xs < maxXs)
+        {
+            xs += 0.1f;
+        }
+        
+        if(xs >= maxXs)
+        {
+            tempVector = GetComponent<Transform>().position;
+        }
+
     }
 }
