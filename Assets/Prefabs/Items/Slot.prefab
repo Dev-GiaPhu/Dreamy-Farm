@@ -62,7 +62,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -134,8 +134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebc3cb240b9b5497497178719e9d175f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
+  type: 0
   icon: {fileID: 5268797425309019690}
-  countText: {fileID: 5899572345225436668}
+  amountText: {fileID: 5899572345225436668}
+  inventoryIndex: 0
 --- !u!1 &8349700217297326195
 GameObject:
   m_ObjectHideFlags: 0

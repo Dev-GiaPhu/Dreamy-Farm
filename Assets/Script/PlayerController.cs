@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
 /// <summary>
 /// PlayerController — quản lý di chuyển, hành động (sword/pickaxe/axe/fishing/jump) và UI slot.
@@ -22,9 +23,13 @@ public class PlayerController : MonoBehaviour
     public bool isSwording = false;
     public bool isPickaxing = false;
     public bool isFishing = false;
+    private Coroutine fishingCoroutine;
+
     public bool isShoveling = false;
     public bool isWaterCaning = false;
     public bool OpenPackBack = false;
+
+    public bool isRight;
 
     [Tooltip("Balo của người chơi (gán trong Inspector)")]
     public GameObject PackBackUI;
@@ -51,14 +56,32 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Collider khu vực câu cá bên trái (có thể gán thủ công, nếu null script sẽ tìm child tên LeftAreaFish)")]
     public CircleCollider2D LeftAreaFish;
 
-    [Header("Vùng câu cá")]
-    [Tooltip("Sprite object hiển thị 'ex fish' bên phải")]
-    public GameObject ExFishRight;
-    [Tooltip("Sprite object hiển thị 'ex fish' bên trái")]
-    public GameObject ExFishLeft;
+    private static readonly Color[] MajorFishColors = new Color[]
+    {
+        Color.red,      // Đỏ
+        Color.yellow,   // Vàng
+        Color.green,    // Xanh lá
+        Color.blue,     // Xanh dương
+        Color.magenta,  // Hồng/Tím (Pink)
+        Color.white,    // Trắng
+        Color.cyan,     // Xanh lơ (Cyan)
+        new Color(1f, 0.5f, 0f), // Cam (Orange)
+        new Color(0.5f, 0f, 0.5f), // Tím đậm (Purple) - vẫn nổi bật
+    };
 
-    private SpriteRenderer exFishRightRenderer;
-    private SpriteRenderer exFishLeftRenderer;
+    [Header("Icon")]
+    [Tooltip("Sprite object hiển thị 'ex fish'")]
+    public GameObject ExFish;
+
+    [Header("Fish")]
+    public ItemData[] fish;
+
+    [Header("ItemCollect")]
+    public Sprite collectedSprite;
+    public GameObject conllectItem;
+    public AnimationItemCollect timeCollectitonItem;
+
+    private SpriteRenderer exFishRenderer;
 
     [Header("Tilemap Water")]
     public Tilemap waterTilemap;
@@ -87,11 +110,11 @@ public class PlayerController : MonoBehaviour
             if (t != null) LeftAreaFish = t.GetComponent<CircleCollider2D>();
         }
 
-        if (ExFishRight != null) exFishRightRenderer = ExFishRight.GetComponent<SpriteRenderer>();
-        if (ExFishLeft != null) exFishLeftRenderer = ExFishLeft.GetComponent<SpriteRenderer>();
+        if (ExFish != null) exFishRenderer = ExFish.GetComponent<SpriteRenderer>();
 
-        if (exFishRightRenderer != null) exFishRightRenderer.enabled = false;
-        if (exFishLeftRenderer != null) exFishLeftRenderer.enabled = false;
+        if (exFishRenderer != null) exFishRenderer.enabled = false;
+
+        timeCollectitonItem = conllectItem.GetComponent<AnimationItemCollect>();
     }
 
     void Start()
@@ -109,13 +132,14 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandleSlotSelection();
-        HandleMovement();
         HandleActions();
+        HandleMovement();
     }
 
     void FixedUpdate()
     {
-        if (rb != null) rb.linearVelocity = movement * Speed;
+        if (rb != null && isWaterCaning) rb.linearVelocity = movement * (Speed*0.5f);
+        else if (rb != null && !isWaterCaning) rb.linearVelocity = movement * Speed;
     }
     #endregion
 
@@ -130,6 +154,11 @@ public class PlayerController : MonoBehaviour
     
     void HandleSlotSelection()
     {
+        if (isFishing || isAxeing || isSwording || isPickaxing || isJumping || isShoveling || isWaterCaning)
+        {
+            return;
+        }
+
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll < 0f) handItem = (handItem + 1) % 6;
         else if (scroll > 0f) handItem = (handItem - 1 + 6) % 6;
@@ -175,7 +204,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        if (!isAxeing && !isSwording && !isPickaxing && !isFishing && !isShoveling && !isWaterCaning)
+        if (!isAxeing && !isSwording && !isPickaxing && !isFishing && !isShoveling)
         {
             float moveX = Input.GetAxisRaw("Horizontal");
             float moveY = Input.GetAxisRaw("Vertical");
@@ -197,7 +226,7 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.J)) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !OpenPackBack && !isWaterCaning)
+            if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !isWaterCaning)
             {
                 switch (it)
                 {
@@ -225,12 +254,20 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // BỔ SUNG: Logic dừng Fishing khi đổi item
+        // Nếu đang câu cá VÀ item hiện tại không phải là Cần câu
+        if (isFishing && it != ItemType.FishingRod)
+        {
+            StopFishingImmediately();
+        }
+
         if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.J)) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !OpenPackBack)
+            if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing)
             {
                 if (it == ItemType.FishingRod)
-                    StartCoroutine(DoFishing());
+                    // LƯU COROUTINE để có thể dừng sau này
+                    fishingCoroutine = StartCoroutine(DoFishing());
             }
         }
 
@@ -238,12 +275,12 @@ public class PlayerController : MonoBehaviour
         {
             if (!OpenPackBack)
             {
-                PackBackUI.transform.position = new Vector3(610, 540, 0);
+                PackBackUI.transform.position = new Vector3(410, 540, 0);
                 OpenPackBack = true;
             }
             else
             {
-                PackBackUI.transform.position = new Vector3(-9040, 540, 0);
+                PackBackUI.transform.position = new Vector3(-9340, 540, 0);
                 OpenPackBack = false;
             }
         }
@@ -285,10 +322,16 @@ public class PlayerController : MonoBehaviour
     IEnumerator DoPickaxe()
     {
         isPickaxing = true;
+        Debug.Log("Pickaxe use.");
         if (animator != null) animator.SetTrigger("Pickaxe");
         var hitbox = GetComponentInChildren<PlayerHitBox>();
+        if(hitbox == null)
+            Debug.Log("hitbox is null");
         if (hitbox != null)
+        {
             hitbox.EnableHitBox();
+            Debug.Log("hitbox is'not null");
+        }
         yield return new WaitForSeconds(0.8f);
         if (hitbox != null)
             hitbox.DisableHitBox();
@@ -300,8 +343,11 @@ public class PlayerController : MonoBehaviour
         isAxeing = true;
         if (animator != null) animator.SetTrigger("Axe");
         var hitbox = GetComponentInChildren<PlayerHitBox>();
+        if(hitbox = null)
+            Debug.Log("hitbox is null");
         if (hitbox != null)
             hitbox.EnableHitBox();
+        Debug.Log("Pickaxe use.");
 
         yield return new WaitForSeconds(0.8f);
         if (hitbox != null)
@@ -311,13 +357,17 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator DoFishing()
     {
-        // --- giữ nguyên toàn bộ logic fishing ---
         CircleCollider2D fishingArea = transform.localScale.x > 0 ? RightAreaFish : LeftAreaFish;
-        bool isRight = transform.localScale.x > 0;
+        isRight = transform.localScale.x > 0;
 
         if (!IsColliderOverWater(fishingArea))
         {
+            isFishing = true;
+            if (animator != null) animator.SetTrigger("Can'tFish");
+            yield return new WaitForSeconds(0.7f);
             Debug.Log("Không có tile Water trong vùng, không thể câu cá!");
+            isFishing = false;
+            fishingCoroutine = null; // Đặt lại sau khi Coroutine kết thúc
             yield break;
         }
 
@@ -327,7 +377,7 @@ public class PlayerController : MonoBehaviour
         if (animator != null) animator.SetTrigger("Fishing");
         yield return new WaitForSeconds(0.5f);
 
-        float fishingDuration = Random.Range(6f, 20f);
+        float fishingDuration = Random.Range(3f, 10f);
         float timer = 0f;
         Debug.Log("Cho trong khoảng " + fishingDuration.ToString("F1") + " giây để cá cắn...");
         while (timer < fishingDuration)
@@ -335,30 +385,22 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.J))
             {
                 Debug.Log("😢 Bạn thu cần quá sớm!");
-                if (animator != null) animator.SetTrigger("FishingDone");
-                yield return new WaitForSeconds(1f);
-                isFishing = false;
+                // Sử dụng hàm dọn dẹp để xử lý thu cần và chờ animation
+                yield return StartCoroutine(FinishFishingCleanup());
+                fishingCoroutine = null; // Đặt lại sau khi Coroutine kết thúc
                 yield break;
             }
             timer += Time.deltaTime;
             yield return null;
         }
 
-        Color fishColor = Color.black;
-        while (fishColor == Color.black)
-        {
-            fishColor = Random.ColorHSV(0.8f, 1f, 0.8f, 1f, 0.8f, 1f);
-        }
+        // CHỌN MỘT MÀU NỔI BẬT VÀ KHÁC BIỆT TỪ DANH SÁCH ĐÃ ĐỊNH NGHĨA
+        Color fishColor = MajorFishColors[Random.Range(0, MajorFishColors.Length)];
 
-        if (isRight && exFishRightRenderer != null)
+        if (exFishRenderer != null)
         {
-            exFishRightRenderer.color = fishColor;
-            exFishRightRenderer.enabled = true;
-        }
-        else if (!isRight && exFishLeftRenderer != null)
-        {
-            exFishLeftRenderer.color = fishColor;
-            exFishLeftRenderer.enabled = true;
+            exFishRenderer.color = fishColor;
+            exFishRenderer.enabled = true;
         }
 
         float reactionTime = 2f;
@@ -375,24 +417,63 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        if (exFishRightRenderer != null) exFishRightRenderer.enabled = false;
-        if (exFishLeftRenderer != null) exFishLeftRenderer.enabled = false;
+        if (exFishRenderer != null) exFishRenderer.enabled = false;
 
         if (animator != null) animator.SetTrigger("FishingUp");
 
         if (caught)
         {
+            int valuefish = Random.Range(0,15);
+            var _fish = fish[valuefish];
             yield return new WaitForSeconds(Random.Range(0.5f, 3f));
-            if (animator != null) animator.SetTrigger("FishingDone");
-            Debug.Log($"🎉 Bạn đã câu được");
+            
+            // Sử dụng hàm dọn dẹp để xử lý thu cần và chờ animation
+            yield return StartCoroutine(FinishFishingCleanup());
+            
+            Debug.Log($"🎉 Bạn đã câu được {_fish}");
+            AnimationItemCollect.Instance.TriggerAnimation(_fish.icon);
+            yield return new WaitForSeconds(timeCollectitonItem.lifetime + timeCollectitonItem.durationGrow + (timeCollectitonItem.durationGrow *0.5f) + timeCollectitonItem.durationShrink);
+            Inventory.Instance.AddItem(_fish, _fish.itemName, 1);
         }
         else
         {
-            if (animator != null) animator.SetTrigger("FishingDone");
+            // Sử dụng hàm dọn dẹp để xử lý thu cần và chờ animation
+            yield return StartCoroutine(FinishFishingCleanup());
             Debug.Log($"😢 Bạn đã để tuột mất!");
         }
+        
+        fishingCoroutine = null; // Đặt lại sau khi Coroutine kết thúc
+    }
 
-        yield return new WaitForSeconds(0.7f);
+    public void StopFishingImmediately()
+    {
+        if (fishingCoroutine != null)
+        {
+            StopCoroutine(fishingCoroutine);
+            fishingCoroutine = null;
+        }
+
+        if (isFishing)
+        {
+            // THU CẦN VÀ CHỜ ANIMATION KẾT THÚC
+            StartCoroutine(FinishFishingCleanup());
+        }
+    }
+
+    IEnumerator FinishFishingCleanup()
+    {
+        Debug.Log("Fishing stopped by external event (item change). Cleaning up...");
+        
+        // Vô hiệu hóa Icon cá nếu đang hiển thị
+        if (exFishRenderer != null) exFishRenderer.enabled = false;
+        
+        // Kích hoạt animation thu cần (FishingDone)
+        if (animator != null) animator.SetTrigger("FishingDone");
+        
+        // Chờ animation kết thúc (1 giây như bạn đề xuất)
+        yield return new WaitForSeconds(1f);
+        
+        // Đặt lại trạng thái
         isFishing = false;
     }
 
@@ -433,6 +514,10 @@ public class PlayerController : MonoBehaviour
             }
         }
         return false;
+    }
+    public bool IsAnyActionInProgress()
+    {
+        return isAxeing || isSwording || isPickaxing || isFishing || isShoveling || isWaterCaning || isJumping;
     }
 #endregion
 }

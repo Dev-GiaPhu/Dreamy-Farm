@@ -10,27 +10,46 @@ public class Inventory : MonoBehaviour
     public int slotHotbar = 6;
     public int slotInv = 24;
 
-    public List<ListItem> Items = new List<ListItem>();
+    // List chứa tất cả các slot, bao gồm cả slot trống
+    public List<ListItem> Items = new List<ListItem>(); 
 
     // UI
     public InventorySlotUI[] hotbarSlots;
     public InventorySlotUI[] inventorySlots;
-
+    
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+    }
+
+    private void Start()
+    {
+        // KHỞI TẠO TẤT CẢ CÁC SLOT TRONG INVENTORY
+        int totalSlots = slotHotbar + slotInv;
+        for (int i = 0; i < totalSlots; i++)
+        {
+            // new ListItem() được sử dụng an toàn nhờ constructor không tham số
+            ListItem newSlot = new ListItem(); 
+            newSlot.SetSlotIndex(i);
+            Items.Add(newSlot);
+        }
     }
 
     // Thêm item vào inventory
     public int AddItem(ItemData data, string nameitem, int amount)
     {
         int remaining = amount;
-        string iname = nameitem;
-
-        // --- Ưu tiên stack vào slot tồn tại ---
-        foreach (var item in Items)
+        
+        // --- 1. Ưu tiên stack vào slot tồn tại ---
+        for (int i = 0; i < Items.Count; i++)
         {
-            if (item.itemData == data)
+            var item = Items[i];
+            if (item.itemData == data && item.count < data.maxStack)
             {
                 int space = data.maxStack - item.count;
 
@@ -46,27 +65,82 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // --- Nếu còn dư → tạo slot mới ---
-        while (remaining > 0)
+        // --- 2. Nếu còn dư → điền vào slot trống đầu tiên ---
+        if (remaining > 0)
         {
-            int add = Mathf.Min(data.maxStack, remaining);
-
-            // Nếu inventory full thì return số dư
-            if (Items.Count >= slotInv + slotHotbar)
+            for (int i = 0; i < Items.Count; i++)
             {
-                UpdateUI();
-                return remaining;
-            }   
-
-            Items.Add(new ListItem(data, add, Items.Count));
-
-            remaining -= add;
+                var item = Items[i];
+                if (item.IsEmpty)
+                {
+                    int add = Mathf.Min(data.maxStack, remaining);
+                    
+                    // Gán dữ liệu cho slot trống
+                    item.itemData = data;
+                    item.count = add;
+                    item.itname = data.itemName; // Cập nhật tên item
+                    
+                    remaining -= add;
+                    
+                    if (remaining <= 0)
+                    {
+                        UpdateUI();
+                        return 0;
+                    }
+                }
+            }
         }
+
+        // Nếu List đã full và không thể stack (dù đã khởi tạo hết slot)
+        if (remaining > 0)
+        {
+            UpdateUI();
+            return remaining;
+        }
+        
         UpdateUI();
-        return 0; // ADD HẾT
+        return 0; 
     }
 
-        public void UpdateUI()
+
+    // HÀM HOÁN ĐỔI ĐÃ SỬA LỖI NRE (chỉ hoán đổi thuộc tính)
+    public void SwapSlots(int index1, int index2)
+    {
+        // Kiểm tra index hợp lệ
+        if (index1 < 0 || index1 >= Items.Count || index2 < 0 || index2 >= Items.Count)
+        {
+            Debug.LogError($"Swap index out of bounds. Index1: {index1}, Index2: {index2}, Total Items: {Items.Count}");
+            return;
+        }
+
+        // Lấy dữ liệu hai slot (đối tượng ListItem)
+        ListItem item1 = Items[index1];
+        ListItem item2 = Items[index2];
+
+        // --- Bắt đầu Hoán đổi Dữ liệu ---
+
+        // 1. Lưu tạm thời dữ liệu item1
+        ItemData tempItemData = item1.itemData;
+        int tempCount = item1.count;
+        
+        // 2. Gán dữ liệu item2 cho vị trí 1
+        item1.itemData = item2.itemData;
+        item1.count = item2.count;
+        item1.itname = (item2.itemData != null) ? item2.itemData.itemName : "";
+
+
+        // 3. Gán dữ liệu item1 (temp) cho vị trí 2
+        item2.itemData = tempItemData;
+        item2.count = tempCount;
+        item2.itname = (tempItemData != null) ? tempItemData.itemName : "";
+        
+        // --- Kết thúc Hoán đổi Dữ liệu ---
+        
+        UpdateUI();
+    }
+
+
+    public void UpdateUI()
     {
         // --- Clear toàn bộ UI trước ---
         foreach (var slot in hotbarSlots)
@@ -81,20 +155,23 @@ public class Inventory : MonoBehaviour
         {
             var item = Items[i];
 
-            // Slot hotbar trước
-            if (i < slotHotbar)
+            // CHỈ render nếu item KHÔNG trống
+            if (!item.IsEmpty)
             {
-                hotbarSlots[i].SetItem(item.itemData, Items[i].itname, item.count);
-            }
-            else // Sau đó inventory
-            {
-                int invIndex = i - slotHotbar;
-                if (invIndex < inventorySlots.Length)
+                // Slot hotbar trước
+                if (i < slotHotbar && i < hotbarSlots.Length)
                 {
-                    inventorySlots[invIndex].SetItem(item.itemData, Items[i].itname,  item.count);
+                    hotbarSlots[i].SetItem(item.itemData, item.itname, item.count);
+                }
+                else // Sau đó inventory
+                {
+                    int invIndex = i - slotHotbar;
+                    if (invIndex >= 0 && invIndex < inventorySlots.Length)
+                    {
+                        inventorySlots[invIndex].SetItem(item.itemData, item.itname, item.count);
+                    }
                 }
             }
         }
     }
-
 }

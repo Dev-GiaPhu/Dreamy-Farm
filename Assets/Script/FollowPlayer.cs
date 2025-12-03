@@ -3,12 +3,12 @@ using UnityEngine;
 public class FollowPlayer : MonoBehaviour
 {
     [Header("Target theo dõi")]
-    public PlayerController player; // Gán Player có script PlayerController
+    public PlayerController player;
     public float PosZ = -10f;
 
     [Header("Hiệu ứng camera")]
-    public float moveOffsetX = -4.5f;   // dịch sang trái khi mở balo
-    public float smoothSpeed = 5f;      // tốc độ mượt
+    public float moveOffsetX = -4.5f;
+    public float smoothSpeed = 5f;
 
     private float currentOffsetX = 0f;
 

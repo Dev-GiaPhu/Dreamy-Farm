@@ -48,9 +48,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed82c85237caf496c9bb0e5a6145dd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  nodeType: Tree
   maxHealth: 3
   currentHealth: 0
   respawnTime: 10
+  dropList:
+  - itemPrefab: {fileID: 8969344409195308339, guid: 023c81b3d6c6b45d2859a80fc424d19e, type: 3}
+    minAmount: 0
+    maxAmount: 3
+  shouldDropItems: 1
+  ellipseRadiusX: 2
+  ellipseRadiusY: 1
 --- !u!212 &8547629758452531447
 SpriteRenderer:
   m_ObjectHideFlags: 0

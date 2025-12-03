@@ -15,6 +15,7 @@ public class PlayerHitBox : MonoBehaviour
 
     public void EnableHitBox()
     {
+        Debug.Log("Enable hitbox");
         hitCollider.enabled = true;
         hasHitThisSwing = false;
     }
@@ -37,11 +38,22 @@ public class PlayerHitBox : MonoBehaviour
         // Swing Axe (handItem == 2) đánh Tree
         if (player.it == ItemType.Axe && trigger.CompareTag("Tree"))
         {
-            Tree tree = trigger.GetComponentInParent<Tree>();
+            ResourceNode tree = trigger.GetComponentInParent<ResourceNode>();
             if (tree != null)
             {
                 tree.TakeHit();
                 Debug.Log("Cây bị chặt!");
+                StartCoroutine(WaitOff());
+            }
+        }
+
+        if(player.it == ItemType.Pickaxe && trigger.CompareTag("Stone"))
+        {
+            ResourceNode tree = trigger.GetComponentInParent<ResourceNode>();
+            if (tree != null)
+            {
+                tree.TakeHit();
+                Debug.Log("Đá bị chặt!");
                 StartCoroutine(WaitOff());
             }
         }

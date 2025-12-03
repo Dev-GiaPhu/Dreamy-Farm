@@ -2,13 +2,13 @@
 - Project name: Dreamy-Farm
 - Unity version: Unity 6000.2.7f2
 - Active scene:
-  - Name: SampleScene
+  - Name: GamePlay
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, House, Tree, Sword Item Hand, Pickaxe Item Hand, Axe Item Hand, Rod Item Hand, Water, Shove Hand Item, Water Can, BackPack, Cow
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Tree, Water, UI, Cow
+    - Default, TransparentFX, Ignore Raycast, Water, UI
 - Active game object:
-  - Name: Main Camera
-  - Tag: MainCamera
+  - Name: Inventory Manager
+  - Tag: Untagged
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

@@ -33,7 +33,7 @@ public class CowController : MonoBehaviour
     private bool waitingAfterCollision = false;
     public bool Die = false;
 
-    private Spawn_Cow spawner; // Tham chiếu đến script spawn
+    private Spawn_Cow spawner;
 
     void Start()
     {
@@ -59,7 +59,6 @@ public class CowController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
         animator.SetBool("Walk", false);
 
-        // Lật hướng sprite
         if (isMoving)
         {
             if (rb.linearVelocity.x > 0.01f)
