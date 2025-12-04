@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9028036390582177613}
   - component: {fileID: 7068378488575643143}
   m_Layer: 0
-  m_Name: Rock 1
+  m_Name: Rock
   m_TagString: Stone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,16 +107,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
   nodeType: Stone
-  maxHealth: 3
+  maxHealth: 5
   currentHealth: 0
-  respawnTime: 5
+  respawnTime: 20
+  minDrops: 2
+  maxDrops: 3
   dropList:
   - itemPrefab: {fileID: 8969344409195308339, guid: affae99f266014886a9d3ebe41f4d9d8, type: 3}
-    minAmount: 0
-    maxAmount: 3
+    weight: 75
   - itemPrefab: {fileID: 8969344409195308339, guid: 6089948559625461c99bc7abb54c9fc2, type: 3}
-    minAmount: 0
-    maxAmount: 0
+    weight: 30
+  - itemPrefab: {fileID: 8969344409195308339, guid: 430d73264aa8745bb90a08392ca4c5cd, type: 3}
+    weight: 15
+  - itemPrefab: {fileID: 8969344409195308339, guid: e0d9873b008df4b47a9f4c294bbbd44a, type: 3}
+    weight: 8
+  - itemPrefab: {fileID: 8969344409195308339, guid: 671d3bbc6c4f1459689a8f222ee7a629, type: 3}
+    weight: 2
   shouldDropItems: 1
   ellipseRadiusX: 1.5
   ellipseRadiusY: 1

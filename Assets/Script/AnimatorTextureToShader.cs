@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIAnimatorTextureToShader : MonoBehaviour
+public class AnimatorTextureToShader : MonoBehaviour
 {
     private const string TexturePropertyName = "_MainTex"; // Phải khớp với tên trong Shader
     private Image uiImage;

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1216a1c7f58d54debb403149ade4d3b1, type: 3}
-  m_Name: Iron
+  m_Name: Gold Ore
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: Iron
-  icon: {fileID: 21300000, guid: 9bc98c98022414daaa3ef0c7694105a6, type: 3}
+  itemName: Gold Ore
+  icon: {fileID: 21300000, guid: 6a9eed313594e46a08c94e07aecffb25, type: 3}
   maxStack: 5
-  description: Iron
+  description: Gold Ore

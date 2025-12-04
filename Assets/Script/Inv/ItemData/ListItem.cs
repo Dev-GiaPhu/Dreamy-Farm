@@ -18,7 +18,7 @@ public class ListItem
         this.count = count;
         this.slotIndex = slotIndex;
         // KHẮC PHỤC LỖI NRE: Đảm bảo itemData không phải là null trước khi truy cập itemName
-        this.itname = itemData.itemName;
+        this.itname = itemData != null ? itemData.itemName : "";
     }
 
     // Thuộc tính tiện ích để kiểm tra slot trống

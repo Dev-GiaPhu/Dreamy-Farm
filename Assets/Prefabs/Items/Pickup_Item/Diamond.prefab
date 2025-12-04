@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: 4430196211209974638}
   - component: {fileID: -2698284358878869611}
   m_Layer: 5
-  m_Name: Iron
+  m_Name: Diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,7 +188,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 15
-  m_Sprite: {fileID: 21300000, guid: 9bc98c98022414daaa3ef0c7694105a6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1e334f20c078745188a90a7c21cdf6ba, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -212,8 +212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   isDroppedItem: 0
-  itemData: {fileID: 11400000, guid: c671d95c05254485cb7a30b99bac7a64, type: 2}
-  nameitem: Iron
+  itemData: {fileID: 11400000, guid: 770c72300ae7d4df09d8ec832d6789cc, type: 2}
+  nameitem: Diamond
   amount: 1
   spriteRenderer: {fileID: 6608594318964950716}
   countText: {fileID: 5597942840322036772}

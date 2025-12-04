@@ -2,21 +2,19 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-// Định nghĩa cấu trúc Item rơi, cho phép gán trong Inspector
-// Chứa trực tiếp Prefab của Item (ví dụ: WoodItemPrefab, StoneItemPrefab)
+// Định nghĩa cấu trúc Item rơi. Chỉ còn Trọng số (Weight)
 [System.Serializable]
 public struct ResourceDrop 
 {
     [Tooltip("Prefab của vật phẩm (đã gán sẵn ItemData trong ItemPickup.cs)")]
-    public GameObject itemPrefab; // THAY THẾ ItemData bằng GameObject Prefab
-
-    [Range(1, 50)]
-    [Tooltip("Số lượng tối thiểu rơi ra.")]
-    public int minAmount;
+    public GameObject itemPrefab; 
     
-    [Range(1, 50)]
-    [Tooltip("Số lượng tối đa rơi ra.")]
-    public int maxAmount;
+    [Header("Drop Probability")]
+    [Range(0f, 100f)]
+    [Tooltip("Trọng số xác suất rơi. Số càng cao, tỉ lệ rơi càng lớn so với các item khác.")]
+    public float weight; 
+    
+    // Đã loại bỏ minAmount/maxAmount vì Node sẽ xác định TỔNG số lượng drops
 }
 
 // ResourceNode là component chung cho mọi đối tượng tài nguyên có thể bị phá hủy
@@ -28,6 +26,14 @@ public class ResourceNode : MonoBehaviour
     public int maxHealth = 3;
     public int currentHealth;
     public float respawnTime = 5f;
+
+    [Header("Drop Count Settings")]
+    [Range(1, 10)]
+    [Tooltip("Số lượng vật phẩm TỐI THIỂU (đơn vị) sẽ rơi ra.")]
+    public int minDrops = 1;
+    [Range(1, 10)]
+    [Tooltip("Số lượng vật phẩm TỐI ĐA (đơn vị) sẽ rơi ra.")]
+    public int maxDrops = 3;
 
     [Header("Item Drop Settings")]
     [Tooltip("Danh sách các Prefab vật phẩm có thể rơi ra từ node này.")]
@@ -55,7 +61,7 @@ public class ResourceNode : MonoBehaviour
     public void TakeHit()
     {
         if (isDead) return;
-        Debug.Log($"{nodeType} bị trúng đòn!"); // Dùng nodeType thay cho "Cây"
+        Debug.Log($"{nodeType} bị trúng đòn!"); 
         currentHealth -= 1;
 
         if (animator != null)
@@ -88,6 +94,45 @@ public class ResourceNode : MonoBehaviour
             coll.enabled = true;
     }
     
+    // Thuật toán chọn ngẫu nhiên dựa trên trọng số (Weighted Random Selection)
+    // Trả về ResourceDrop được chọn
+    private ResourceDrop GetWeightedRandomDrop()
+    {
+        // 1. Tính tổng trọng số
+        float totalWeight = 0f;
+        foreach (var drop in dropList)
+        {
+            totalWeight += drop.weight;
+        }
+
+        // Nếu tổng trọng số = 0, trả về drop đầu tiên (trường hợp lỗi)
+        if (totalWeight <= 0f)
+        {
+            Debug.LogWarning("Total drop weight is 0. Returning first item.");
+            return dropList[0];
+        }
+
+        // 2. Chọn một số ngẫu nhiên từ 0 đến tổng trọng số (độc quyền)
+        float randomNumber = Random.Range(0f, totalWeight);
+        
+        // 3. Lặp qua danh sách để tìm item tương ứng
+        float currentWeight = 0f;
+        foreach (var drop in dropList)
+        {
+            currentWeight += drop.weight;
+            
+            // Nếu số ngẫu nhiên rơi vào khoảng trọng số của item này, chọn nó
+            if (randomNumber < currentWeight)
+            {
+                return drop;
+            }
+        }
+
+        // Fallback (chỉ xảy ra nếu có lỗi tính toán, trả về item cuối cùng)
+        return dropList[dropList.Length - 1];
+    }
+
+
     void DropItems()
     {
         // 1. Kiểm tra danh sách drop có hợp lệ không
@@ -99,31 +144,31 @@ public class ResourceNode : MonoBehaviour
 
         Vector2 nodePosition = transform.position;
         
-        // 2. CHỌN NGẪU NHIÊN 1 LOẠI VẬT PHẨM TỪ DANH SÁCH
-        int randomIndex = Random.Range(0, dropList.Length);
-        ResourceDrop selectedDrop = dropList[randomIndex];
+        // 2. TÍNH TỔNG SỐ LƯỢNG ĐƠN VỊ VẬT PHẨM SẼ RƠI (Min-Max của Node)
+        int totalDrops = Random.Range(minDrops, maxDrops + 1); 
 
-        // 3. Kiểm tra Prefab của vật phẩm đã chọn có hợp lệ không
-        if (selectedDrop.itemPrefab == null)
+        if (totalDrops <= 0)
         {
-            Debug.LogError($"Item Drop tại index {randomIndex} của {nodeType} thiếu Prefab.");
+            Debug.Log($"Node {nodeType} đã không drop vật phẩm nào (Total Drops = 0).");
             return;
         }
 
-        // 4. Tính toán số lượng vật phẩm (từ 1 đến Max)
-        int dropAmount = Random.Range(selectedDrop.minAmount, selectedDrop.maxAmount + 1); 
-
-        if (dropAmount <= 0)
-        {
-            Debug.Log($"Node {nodeType} đã không drop vật phẩm nào (Drop Amount = 0).");
-            return;
-        }
+        Debug.Log($"Node {nodeType} sẽ drop tổng cộng {totalDrops} đơn vị vật phẩm.");
         
-        // 5. Sinh ra từng đơn vị vật phẩm
-        for (int i = 0; i < dropAmount; i++)
+        // 3. Vòng lặp: DROP MỖI ĐƠN VỊ VẬT PHẨM RIÊNG LẺ
+        for (int i = 0; i < totalDrops; i++)
         {
-            // 5a. Tính toán vị trí mục tiêu (dropPosition) ngẫu nhiên theo elip
-            Vector3 dropPosition = Vector3.zero;
+            // 3a. CHỌN LOẠI VẬT PHẨM DỰA TRÊN TRỌNG SỐ
+            ResourceDrop selectedDrop = GetWeightedRandomDrop();
+
+            if (selectedDrop.itemPrefab == null)
+            {
+                Debug.LogError($"Item Drop được chọn thiếu Prefab tại vòng lặp {i}.");
+                continue;
+            }
+            
+            // 3b. Tính toán vị trí mục tiêu (dropPosition) ngẫu nhiên theo elip
+            Vector3 dropPosition = transform.position; // Default to node position
             
             if (shouldDropItems)
             {
@@ -140,29 +185,30 @@ public class ResourceNode : MonoBehaviour
                 );
             }
 
-            // 5b. Tạo vật phẩm, sử dụng Prefab CỤ THỂ đã được chọn ngẫu nhiên
+            // 3c. Tạo vật phẩm (luôn là 1 đơn vị)
+            // LƯU Ý: ItemPickup.amount mặc định là 1. Chúng ta không cần thay đổi.
             GameObject itemSpawn = Instantiate(selectedDrop.itemPrefab, transform.position, Quaternion.identity);
             
-            // 5c. Gán thuộc tính vật lý và gọi UpdateUI().
+            // 3d. Gán thuộc tính vật lý
             ItemPickup itemPickupScript = itemSpawn.GetComponent<ItemPickup>();
             if (itemPickupScript != null)
             {
-                // Quy định dạng item (Rơi/Tĩnh)
                 itemPickupScript.isDroppedItem = shouldDropItems; 
-
-                // Gán VỊ TRÍ MỤC TIÊU
                 itemPickupScript.targetDropPosition = dropPosition; 
                 
-                // Cập nhật UI (với dữ liệu đã gán sẵn trong Prefab)
+                // Đảm bảo số lượng là 1 cho mỗi lần sinh (mặc dù Prefab đã gán, nhưng kiểm tra lại)
+                itemPickupScript.amount = 1; 
+                
                 itemPickupScript.UpdateUI();
             }
             else
             {
-                Debug.LogError("Prefab trong dropList thiếu ItemPickup script!");
+                Debug.LogError($"Prefab '{selectedDrop.itemPrefab.name}' thiếu ItemPickup script!");
                 Destroy(itemSpawn);
             }
+            
+            Debug.Log($"Đơn vị drop thứ {i+1}: {selectedDrop.itemPrefab.name} (Weight: {selectedDrop.weight})");
         }
-        Debug.Log($"Node {nodeType} đã drop {dropAmount} đơn vị vật phẩm {selectedDrop.itemPrefab.name}.");
     }
     
     // Hàm vẽ Gizmos để hiển thị đường viền elip trong Editor
