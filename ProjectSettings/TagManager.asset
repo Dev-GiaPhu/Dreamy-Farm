@@ -17,6 +17,10 @@ TagManager:
   - Cow
   - ICM
   - Stone
+  - Number Emerral
+  - Number Gold
+  - Number Iron
+  - Number Wood
   layers:
   - Default
   - TransparentFX

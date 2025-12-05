@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Fishing Rod
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: FishingRod
+  itemType: 6
   icon: {fileID: 21300000, guid: df1f27bd86ff2dd4496f9067215a51c3, type: 3}
   maxStack: 1
   description: "C\u1EA7n c\xE2u"

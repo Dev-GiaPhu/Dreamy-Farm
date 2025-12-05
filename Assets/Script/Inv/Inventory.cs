@@ -16,6 +16,7 @@ public class Inventory : MonoBehaviour
     // UI
     public InventorySlotUI[] hotbarSlots;
     public InventorySlotUI[] inventorySlots;
+
     
     private void Awake()
     {
@@ -26,7 +27,6 @@ public class Inventory : MonoBehaviour
         }
         Instance = this;
     }
-
     private void Start()
     {
         // KHỞI TẠO TẤT CẢ CÁC SLOT TRONG INVENTORY
@@ -38,6 +38,39 @@ public class Inventory : MonoBehaviour
             newSlot.SetSlotIndex(i);
             Items.Add(newSlot);
         }
+
+        foreach (var item in Items)
+        {
+            // The fixed index of the item in the Items List
+            int dataIndex = item.slotIndex; 
+            
+            // Determine the ItemType
+            ItemType determinedType = item.itemData != null ? item.itemData.itemType : ItemType.Null;
+
+            // --- A. Handle Hotbar (Index 0 up to slotHotbar - 1) ---
+            if (dataIndex < slotHotbar)
+            {
+                // Check the bounds of the UI array to prevent IndexOutOfRangeException
+                if (dataIndex < hotbarSlots.Length)
+                {
+                    // The UI index is the same as the data index for the hotbar
+                    hotbarSlots[dataIndex].type = determinedType;
+                }
+            }
+            // --- B. Handle Main Inventory (Index slotHotbar onwards) ---
+            else
+            {
+                // Calculate the relative index for the inventorySlots UI array (e.g., Data Index 6 -> UI Index 0)
+                int invIndex = dataIndex - slotHotbar;
+                
+                // Check the bounds of the UI array
+                if (invIndex >= 0 && invIndex < inventorySlots.Length)
+                {
+                    inventorySlots[invIndex].type = determinedType;
+                }
+            }
+        }
+        UpdateUI();
     }
 
     // Thêm item vào inventory
@@ -142,34 +175,39 @@ public class Inventory : MonoBehaviour
 
     public void UpdateUI()
     {
-        // --- Clear toàn bộ UI trước ---
+        // 1. Clear toàn bộ UI trước
         foreach (var slot in hotbarSlots)
             slot.ClearSlot();
 
         foreach (var slot in inventorySlots)
             slot.ClearSlot();
 
-
-        // --- Render item list ---
-        for (int i = 0; i < Items.Count; i++)
+        // 2. Render item list (Dùng foreach và item.slotIndex để gán chính xác)
+        foreach (var item in Items)
         {
-            var item = Items[i];
+            // Chỉ render nếu item KHÔNG trống
+            if (item.IsEmpty) continue;
 
-            // CHỈ render nếu item KHÔNG trống
-            if (!item.IsEmpty)
+            // Chỉ mục cố định mà Item này phải hiển thị
+            int targetIndex = item.slotIndex;
+
+            // --- A. Hotbar slots ---
+            if (targetIndex < slotHotbar)
             {
-                // Slot hotbar trước
-                if (i < slotHotbar && i < hotbarSlots.Length)
+                // Truy cập mảng UI bằng targetIndex (item.slotIndex)
+                if (targetIndex >= 0 && targetIndex < hotbarSlots.Length)
                 {
-                    hotbarSlots[i].SetItem(item.itemData, item.itname, item.count);
+                    hotbarSlots[targetIndex].SetItem(item.itemData, item.itname, item.count);
                 }
-                else // Sau đó inventory
+            }
+            // --- B. Inventory slots ---
+            else
+            {
+                // Tính chỉ mục tương đối
+                int invIndex = targetIndex - slotHotbar;
+                if (invIndex >= 0 && invIndex < inventorySlots.Length)
                 {
-                    int invIndex = i - slotHotbar;
-                    if (invIndex >= 0 && invIndex < inventorySlots.Length)
-                    {
-                        inventorySlots[invIndex].SetItem(item.itemData, item.itname, item.count);
-                    }
+                    inventorySlots[invIndex].SetItem(item.itemData, item.itname, item.count);
                 }
             }
         }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pickaxe
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Pickaxe
+  itemType: 3
   icon: {fileID: 21300000, guid: 1d1f96fb619727a49b531ebdf4832c90, type: 3}
   maxStack: 1
   description: "C\xFAp"

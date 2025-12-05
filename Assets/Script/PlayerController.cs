@@ -479,6 +479,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator DoShovel()
     {
+        if (isShoveling) yield break;
         isShoveling = true;
         if (animator != null) animator.SetTrigger("Shovel");
         yield return new WaitForSeconds(1.2f);

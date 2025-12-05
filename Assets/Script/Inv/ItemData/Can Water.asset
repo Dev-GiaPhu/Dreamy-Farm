@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Can Water
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: CanWater
+  itemType: 5
   icon: {fileID: 21300000, guid: 369cd2e4bfc1b4bc0a7fa0d9d2996e5a, type: 3}
   maxStack: 1
   description: "B\xECnh N\u01B0\u1EDBc V\xF2i Sen"

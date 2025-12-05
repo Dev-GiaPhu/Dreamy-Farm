@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Shovel
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Shovel
+  itemType: 4
   icon: {fileID: 21300000, guid: 2ce464edf28bc7648a55b4c0c3ca9f0e, type: 3}
   maxStack: 1
   description: "X\u1EBBng"

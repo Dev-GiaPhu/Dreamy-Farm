@@ -47,7 +47,10 @@ public class HouseTriggerTMP : MonoBehaviour
         {
             Debug.Log("Player vào nhà!");
 
-            UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+            if (Gold_Iron_vv_Manager.Instance != null)
+            {
+                Gold_Iron_vv_Manager.Instance.LoadAndChangeScene(sceneName);
+            }
         }
     }
 }

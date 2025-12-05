@@ -178,7 +178,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: -0.8}
-  m_Radius: 0.3
+  m_Radius: 0.1
 --- !u!1 &3446835779298208994
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,7 +365,7 @@ Transform:
   m_GameObject: {fileID: 4994126410420866008}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.82, y: -0.6, z: 0}
+  m_LocalPosition: {x: 1.874, y: -0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -406,7 +406,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: -0.8}
-  m_Radius: 0.3
+  m_Radius: 0.1
 --- !u!1 &6172478945298759930
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,6 +607,7 @@ GameObject:
   - component: {fileID: 7536696246127645337}
   - component: {fileID: 9085638299319145448}
   - component: {fileID: 7607284543654721229}
+  - component: {fileID: 3550113354457152159}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -642,7 +643,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6826687046832694843}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
@@ -698,6 +699,26 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3550113354457152159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6826687046832694843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c54b7b2d7614d41b2bf554a6dd6c14d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  Canvas: {fileID: 7536696246127645337}
+  sizeStart: {x: 0, y: 0, z: 0}
+  sizeEnd: {x: 1, y: 1, z: 1}
+  lifetime: 3
+  targetImageUI: {fileID: 4816346024862268453}
+  durationGrow: 0.2
+  durationShrink: 0.2
+  overshootScale: 1.1
 --- !u!1 &9004914083310630211
 GameObject:
   m_ObjectHideFlags: 0
@@ -867,6 +888,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 45fcb386066384badb372d28fd8a26b0, type: 2}
   - {fileID: 11400000, guid: feec226d58789416abb2818f93a4ba99, type: 2}
   - {fileID: 11400000, guid: fa9c2ccbdbdb54710904b8fa0aad99ee, type: 2}
+  collectedSprite: {fileID: -1551483179274217568, guid: e4878ee8161ee4ca7831e204328326bc, type: 3}
+  conllectItem: {fileID: 6826687046832694843}
+  timeCollectitonItem: {fileID: 0}
   waterTilemap: {fileID: 0}
   mainCamera: {fileID: 0}
   cameraOffsetX: -4.5
