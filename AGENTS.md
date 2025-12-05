@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Tree, Water, UI, Cow
 - Active game object:
-  - Name: UI Main
+  - Name: Slot (4)
   - Tag: Untagged
   - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

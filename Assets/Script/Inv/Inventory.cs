@@ -175,39 +175,34 @@ public class Inventory : MonoBehaviour
 
     public void UpdateUI()
     {
-        // 1. Clear toàn bộ UI trước
+        // --- Clear all UI slots first (Icons disabled) ---
         foreach (var slot in hotbarSlots)
             slot.ClearSlot();
 
         foreach (var slot in inventorySlots)
             slot.ClearSlot();
 
-        // 2. Render item list (Dùng foreach và item.slotIndex để gán chính xác)
-        foreach (var item in Items)
+
+        // --- Render item list (Only calling SetItem for non-empty slots) ---
+        for (int i = 0; i < Items.Count; i++)
         {
-            // Chỉ render nếu item KHÔNG trống
-            if (item.IsEmpty) continue;
+            var item = Items[i];
 
-            // Chỉ mục cố định mà Item này phải hiển thị
-            int targetIndex = item.slotIndex;
-
-            // --- A. Hotbar slots ---
-            if (targetIndex < slotHotbar)
+            // Only render if the item is NOT empty
+            if (!item.IsEmpty)
             {
-                // Truy cập mảng UI bằng targetIndex (item.slotIndex)
-                if (targetIndex >= 0 && targetIndex < hotbarSlots.Length)
+                // Hotbar slots first
+                if (i < slotHotbar && i < hotbarSlots.Length)
                 {
-                    hotbarSlots[targetIndex].SetItem(item.itemData, item.itname, item.count);
+                    hotbarSlots[i].SetItem(item.itemData, item.itname, item.count);
                 }
-            }
-            // --- B. Inventory slots ---
-            else
-            {
-                // Tính chỉ mục tương đối
-                int invIndex = targetIndex - slotHotbar;
-                if (invIndex >= 0 && invIndex < inventorySlots.Length)
+                else // Then inventory
                 {
-                    inventorySlots[invIndex].SetItem(item.itemData, item.itname, item.count);
+                    int invIndex = i - slotHotbar;
+                    if (invIndex >= 0 && invIndex < inventorySlots.Length)
+                    {
+                        inventorySlots[invIndex].SetItem(item.itemData, item.itname, item.count);
+                    }
                 }
             }
         }

@@ -18827,7 +18827,7 @@ Tilemap:
       - {fileID: -2946311587539621006, guid: 77c32cc97361b4c848a5033fef823ccd, type: 3}
       - {fileID: 6824196694961137682, guid: 77c32cc97361b4c848a5033fef823ccd, type: 3}
       - {fileID: 3507530961316612905, guid: 77c32cc97361b4c848a5033fef823ccd, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 20, y: 2, z: 0}
@@ -18992,7 +18992,7 @@ Tilemap:
       - {fileID: -6454921035935044816, guid: 8dfe2bbcc2f69490aa9a20a64b248304, type: 3}
       - {fileID: -2256711215290073827, guid: 8dfe2bbcc2f69490aa9a20a64b248304, type: 3}
       - {fileID: -7462059434610023659, guid: 8dfe2bbcc2f69490aa9a20a64b248304, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 35, y: 7, z: 0}
@@ -19311,7 +19311,7 @@ Tilemap:
       - {fileID: -2946311587539621006, guid: 77c32cc97361b4c848a5033fef823ccd, type: 3}
       - {fileID: 6824196694961137682, guid: 77c32cc97361b4c848a5033fef823ccd, type: 3}
       - {fileID: 3507530961316612905, guid: 77c32cc97361b4c848a5033fef823ccd, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: -19, y: 25, z: 0}
@@ -19487,7 +19487,7 @@ Tilemap:
       - {fileID: -4170274354514094066, guid: 48749f469d2ee41ada3d6aa0a4756ed1, type: 3}
       - {fileID: 7166029530307986469, guid: 48749f469d2ee41ada3d6aa0a4756ed1, type: 3}
       - {fileID: 21534408854554814, guid: 48749f469d2ee41ada3d6aa0a4756ed1, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 26, y: 37, z: 0}
@@ -73169,14 +73169,14 @@ MonoBehaviour:
     itname: Fishing Rod
     count: 1
     slotIndex: 3
-  - itemData: {fileID: 11400000, guid: 91acf23dbc2d6454db72a60748e828fe, type: 2}
-    itname: Can Water
-    count: 1
-    slotIndex: 5
   - itemData: {fileID: 11400000, guid: 8e5148acb927c455f90deb638995287e, type: 2}
     itname: Shovel
     count: 2
     slotIndex: 4
+  - itemData: {fileID: 11400000, guid: 91acf23dbc2d6454db72a60748e828fe, type: 2}
+    itname: Can Water
+    count: 1
+    slotIndex: 5
   hotbarSlots:
   - {fileID: 1902530185}
   - {fileID: 2084027387}

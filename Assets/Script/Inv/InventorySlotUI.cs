@@ -71,24 +71,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
         }
 
-        string typeit = nameitem.ToString();
-        switch (typeit)
-        {
-            case "Sword":
-                type = ItemType.Sword; break;
-            case "Axe":
-                type = ItemType.Axe; break;
-            case "Pickaxe":
-                type = ItemType.Pickaxe; break;
-            case "Shovel":
-                type = ItemType.Shovel; break;
-            case "CanWater":
-                type = ItemType.CanWater; break;
-            case "FishingRod":
-                type = ItemType.FishingRod; break;
-            default:
-                type = ItemType.Null; break;
-        }
+        type = data.itemType;
         icon.sprite = data.icon;
         icon.enabled = true;
         icon.color = new Color(1f, 1f, 1f, 1f);
