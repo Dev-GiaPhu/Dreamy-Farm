@@ -49,11 +49,11 @@ Dự án được hoàn thiện để nộp bài và làm nền tảng để ph�
 
 ## 🚧 Tiến độ dự án
 
-Hoàn thiện nộp bài:          ███████████████████████ 100%
-Game nông trại hoàn chỉnh:   ███████████████░░░░░░░░ 70%
+- Hoàn thiện nộp bài:          ███████████████████████ 100%
+- Game nông trại hoàn chỉnh:   ███████████████░░░░░░░░ 70%
 
 
-👤 Tác giả
-Nguyễn Gia Phú
-MSSV: PS47618
-Dự án cá nhân, dùng cho mục đích học tập và phát triển cá nhân tôi.
+##👤 Tác giả
+- Nguyễn Gia Phú
+- MSSV: PS47618
+- Dự án cá nhân, dùng cho mục đích học tập và phát triển cá nhân tôi.
