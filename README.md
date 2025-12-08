@@ -2,6 +2,7 @@
 **_A 2D Farm–Simulator Style Game Project_**
 
 <p align="center">
+  <img src="https://github.com/Dev-GiaPhu/Dreamy-Farm/blob/main/LOGO.png" />
   <img src="https://img.shields.io/badge/Unity-6.0-white?logo=unity&logoColor=white&color=000000" />
   <img src="https://img.shields.io/badge/Status-70%25-blue" />
   <img src="https://img.shields.io/badge/Type-Personal%20Project-green" />
