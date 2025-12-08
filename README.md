@@ -51,7 +51,7 @@ Dự án được hoàn thiện để nộp bài và làm nền tảng để ph�
 ## 🚧 Tiến độ dự án
 
 - Hoàn thiện nộp bài:          ███████████████████████ 100%
-- Game nông trại hoàn chỉnh:   ███████████████░░░░░░░░ 70%
+- Game nông trại hoàn chỉnh:   ████████████████░░░░░░░ 70%
 
 
 ##👤 Tác giả
