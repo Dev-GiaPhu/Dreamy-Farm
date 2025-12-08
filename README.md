@@ -35,7 +35,7 @@ Dự án được hoàn thiện để nộp bài và làm nền tảng để ph�
 ### ❌ Chưa hoàn thiện / Đang phát triển
 - Hệ thống trồng cây  
 - Đặt khối (Building/Placing)
-- Item drop (rơi vật phẩm)
+- Item drop (thả, bỏ vật phẩm)
 
 ---
 
@@ -43,7 +43,7 @@ Dự án được hoàn thiện để nộp bài và làm nền tảng để ph�
 - **Unity 6**
 - **C#**
 - **Built-in Render Pipeline**
-- Không dùng packages đặc biệt
+- Packages được tích hợp trong file
 
 ---
 
