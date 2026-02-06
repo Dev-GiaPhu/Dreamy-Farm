@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
@@ -13,6 +14,13 @@ public class PlayerController : MonoBehaviour
 {
     #region Player state & components
     [Header("Player Stats")]
+    public float MaxHeath = 100f;
+    public float CurrentHeath;
+    private bool Die = false;
+    private bool isHiting = false;
+    public GameObject SlideHealth;
+    public GameObject GameOverUI;
+
     public ItemType it;
     public int handItem = 0;
     public float Speed = 3f;
@@ -127,6 +135,8 @@ public class PlayerController : MonoBehaviour
             mainCamera = Camera.main;
         if (mainCamera != null)
             cameraOriginalPos = mainCamera.transform.position;
+
+        CurrentHeath = MaxHeath;
     }
 
     void Update()
@@ -134,6 +144,20 @@ public class PlayerController : MonoBehaviour
         HandleSlotSelection();
         HandleActions();
         HandleMovement();
+        SlideHeath();
+    }
+
+    public void SlideHeath()
+    {
+        if (SlideHealth != null)
+        {
+            Slider slider = SlideHealth.GetComponent<Slider>();
+            if (slider != null)
+            {
+                slider.maxValue = MaxHeath;
+                slider.value = CurrentHeath;
+            }
+        }
     }
 
     void FixedUpdate()
@@ -152,9 +176,35 @@ public class PlayerController : MonoBehaviour
     public void OnclickSlot5(){handItem = 4;}
     public void OnclickSlot6(){handItem = 5;}
     
+    
+    public void Hit(double damage)
+    {
+        if (Die) return;
+        animator.SetTrigger("Hit");
+        isHiting = true; StartCoroutine(StopHit());
+        CurrentHeath -= (float)damage;
+        if (CurrentHeath <= 0)
+        {
+            animator.SetBool("Dead", true);
+            Die = true;
+            CurrentHeath = 0;
+            StartCoroutine(GameOver());
+        }
+    }
+
+    IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(1f);
+        GameOverUI.SetActive(true);
+    }
+    IEnumerator StopHit()
+    {
+        yield return new WaitForSeconds(0.5f);
+        isHiting = false;
+    }
     void HandleSlotSelection()
     {
-        if (isFishing || isAxeing || isSwording || isPickaxing || isJumping || isShoveling || isWaterCaning)
+        if (isFishing || isAxeing || isSwording || isPickaxing || isJumping || isShoveling || isWaterCaning )
         {
             return;
         }
@@ -204,7 +254,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        if (!isAxeing && !isSwording && !isPickaxing && !isFishing && !isShoveling)
+        if (!isAxeing && !isSwording && !isPickaxing && !isFishing && !isShoveling && !Die && !isHiting)
         {
             float moveX = Input.GetAxisRaw("Horizontal");
             float moveY = Input.GetAxisRaw("Vertical");
@@ -226,7 +276,7 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.J)) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !isWaterCaning)
+            if (!isFishing && !isJumping && !isAxeing && !isSwording && !isPickaxing && !isWaterCaning && !isShoveling && !Die && !isHiting)
             {
                 switch (it)
                 {

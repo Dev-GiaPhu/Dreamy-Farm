@@ -69,6 +69,17 @@ public class PlayerHitBox : MonoBehaviour
                 StartCoroutine(WaitOff());
             }
         }
+
+        if (player.it == ItemType.Sword && trigger.CompareTag("Nhim"))
+        {
+            HedgehogController nhim = trigger.GetComponentInParent<HedgehogController>();
+            if (nhim != null)
+            {
+                nhim.TakeHit();
+                Debug.Log("Nhím bị đánh!");
+                StartCoroutine(WaitOff());
+            }
+        }
     }
     IEnumerator WaitOff()
     {

@@ -52,12 +52,12 @@ public class ItemPickup : MonoBehaviour
             icm = icmGo.GetComponent<Gold_Iron_vv_Manager>();
             if (icm == null)
             {
-                Debug.LogError("FATAL ERROR: GameObject with tag 'ICM' does not have the Gold_Iron_vv_Manager script.");
+                Debug.Log("<color=red>FATAL ERROR:</color> GameObject with tag 'ICM' does not have the Gold_Iron_vv_Manager script.");
             }
         }
         else
         {
-            Debug.LogError("CRITICAL ERROR: GameObject with tag 'ICM' not found! Please tag your manager object.");
+            Debug.Log("<color=red>CRITICAL ERROR:</color> GameObject with tag 'ICM' not found! Please tag your manager object.");
         }
     }
 

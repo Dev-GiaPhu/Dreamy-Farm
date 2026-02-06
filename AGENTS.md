@@ -1,14 +1,14 @@
 <!-- UNITY CODE ASSIST INSTRUCTIONS START -->
 - Project name: Dreamy-Farm
-- Unity version: Unity 6000.2.7f2
+- Unity version: Unity 6000.4.0b6
 - Active scene:
-  - Name: GamePlay
+  - Name: Home
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, House, Tree, Sword Item Hand, Pickaxe Item Hand, Axe Item Hand, Rod Item Hand, Water, Shove Hand Item, Water Can, BackPack, Cow, ICM, Stone, Number Emerral, Number Gold, Number Iron, Number Wood
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, House, Tree, Sword Item Hand, Pickaxe Item Hand, Axe Item Hand, Rod Item Hand, Water, Shove Hand Item, Water Can, BackPack, Cow, ICM, Stone, Number Emerral, Number Gold, Number Iron, Number Wood, Nhim
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Tree, Water, UI, Cow
 - Active game object:
-  - Name: Slot (4)
+  - Name: Base
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

@@ -141,7 +141,7 @@ public class GameDataManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[GameDataManager] Không tìm thấy Player để lưu vị trí ngay lập tức.");
+            Debug.Log("[GameDataManager] Không tìm thấy Player để lưu vị trí ngay lập tức.");
         }
     }
     
@@ -177,7 +177,7 @@ public class GameDataManager : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogError($"[LoadPos] Không tìm thấy đối tượng Player trong Scene: {currentSceneName}.");
+            Debug.Log($"[LoadPos] Không tìm thấy đối tượng Player trong Scene: {currentSceneName}.");
             return;
         }
 
