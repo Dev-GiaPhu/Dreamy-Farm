@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
+using NUnit.Framework.Constraints;
 
 /// <summary>
 /// PlayerController — quản lý di chuyển, hành động (sword/pickaxe/axe/fishing/jump) và UI slot.
@@ -12,6 +13,18 @@ using Unity.VisualScripting;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
+    public AudioSource audioSource;
+    public AudioClip soundSword;
+    public AudioClip soundPickaxe;
+    public AudioClip soundAxe;
+    public AudioClip fishingSound;
+    public AudioClip FishCaughtSound;
+    public AudioClip pullingSound;
+    public AudioClip hitSound;
+    public AudioClip shovelSound;
+    public AudioClip waterCanSound;
+    public AudioClip openPackBackSound;
+    public AudioClip closePackBackSound;
     #region Player state & components
     [Header("Player Stats")]
     public float MaxHeath = 100f;
@@ -288,6 +301,7 @@ public class PlayerController : MonoBehaviour
                         if (animator != null && !isWaterCaning)
                         {
                             animator.SetTrigger("Can Water");
+                            audioSource.PlayOneShot(waterCanSound);
                             isWaterCaning = true;
                         }
                         break;
@@ -301,6 +315,7 @@ public class PlayerController : MonoBehaviour
             {
                 isWaterCaning = false;
                 if (animator != null) animator.SetTrigger("Stop Water");
+                audioSource.Stop();
             }
         }
 
@@ -326,11 +341,13 @@ public class PlayerController : MonoBehaviour
             if (!OpenPackBack)
             {
                 PackBackUI.transform.position = new Vector3(410, 540, 0);
+                audioSource.PlayOneShot(openPackBackSound);
                 OpenPackBack = true;
             }
             else
             {
                 PackBackUI.transform.position = new Vector3(-9340, 540, 0);
+                audioSource.PlayOneShot(closePackBackSound);
                 OpenPackBack = false;
             }
         }
@@ -364,7 +381,9 @@ public class PlayerController : MonoBehaviour
         var hitbox = GetComponentInChildren<PlayerHitBox>();
         if (hitbox != null)
             hitbox.EnableHitBox();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
+        audioSource.PlayOneShot(soundSword, 0.8f);
+        yield return new WaitForSeconds(0.7f);
         isSwording = false;
         Debug.Log("Attack Done.");
     }
@@ -382,7 +401,9 @@ public class PlayerController : MonoBehaviour
             hitbox.EnableHitBox();
             Debug.Log("hitbox is'not null");
         }
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.3f);
+        audioSource.PlayOneShot(soundSword, 0.8f);
+        yield return new WaitForSeconds(0.5f);
         if (hitbox != null)
             hitbox.DisableHitBox();
         isPickaxing = false;
@@ -392,8 +413,9 @@ public class PlayerController : MonoBehaviour
     {
         isAxeing = true;
         if (animator != null) animator.SetTrigger("Axe");
+        audioSource.PlayOneShot(soundAxe);
         var hitbox = GetComponentInChildren<PlayerHitBox>();
-        if(hitbox = null)
+        if(hitbox == null)   
             Debug.Log("hitbox is null");
         if (hitbox != null)
             hitbox.EnableHitBox();
@@ -414,7 +436,9 @@ public class PlayerController : MonoBehaviour
         {
             isFishing = true;
             if (animator != null) animator.SetTrigger("Can'tFish");
-            yield return new WaitForSeconds(0.7f);
+            yield return new WaitForSeconds(0.3f);
+            audioSource.PlayOneShot(fishingSound);
+            yield return new WaitForSeconds(0.4f);
             Debug.Log("Không có tile Water trong vùng, không thể câu cá!");
             isFishing = false;
             fishingCoroutine = null; // Đặt lại sau khi Coroutine kết thúc
@@ -425,7 +449,10 @@ public class PlayerController : MonoBehaviour
         isFishing = true;
 
         if (animator != null) animator.SetTrigger("Fishing");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
+        audioSource.PlayOneShot(fishingSound);
+        yield return new WaitForSeconds(0.3f);
+        audioSource.PlayOneShot(FishCaughtSound);
 
         float fishingDuration = Random.Range(3f, 10f);
         float timer = 0f;
@@ -435,6 +462,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.J))
             {
                 Debug.Log("😢 Bạn thu cần quá sớm!");
+                audioSource.PlayOneShot(soundSword, 0.5f);
                 // Sử dụng hàm dọn dẹp để xử lý thu cần và chờ animation
                 yield return StartCoroutine(FinishFishingCleanup());
                 fishingCoroutine = null; // Đặt lại sau khi Coroutine kết thúc
@@ -456,6 +484,7 @@ public class PlayerController : MonoBehaviour
         float reactionTime = 2f;
         bool caught = false;
         float reactionTimer = 0f;
+        audioSource.PlayOneShot(FishCaughtSound);
         while (reactionTimer < reactionTime)
         {
             if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.J))
@@ -470,6 +499,7 @@ public class PlayerController : MonoBehaviour
         if (exFishRenderer != null) exFishRenderer.enabled = false;
 
         if (animator != null) animator.SetTrigger("FishingUp");
+        audioSource.PlayOneShot(pullingSound);
 
         if (caught)
         {
@@ -490,6 +520,7 @@ public class PlayerController : MonoBehaviour
             // Sử dụng hàm dọn dẹp để xử lý thu cần và chờ animation
             yield return StartCoroutine(FinishFishingCleanup());
             Debug.Log($"😢 Bạn đã để tuột mất!");
+            audioSource.PlayOneShot(soundSword, 0.5f);
         }
         
         fishingCoroutine = null; // Đặt lại sau khi Coroutine kết thúc
@@ -532,6 +563,7 @@ public class PlayerController : MonoBehaviour
         if (isShoveling) yield break;
         isShoveling = true;
         if (animator != null) animator.SetTrigger("Shovel");
+        audioSource.PlayOneShot(shovelSound);
         yield return new WaitForSeconds(1.2f);
         isShoveling = false;
     }

@@ -6,6 +6,8 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody2D))]
 public class CowController : MonoBehaviour
 {
+    public AudioSource audioSource;
+    public AudioClip SpawnSound;
     [Header("Thông tin")]
     public string cowName = "Bò sữa";
     public float maxHealth = 5f;
@@ -37,7 +39,7 @@ public class CowController : MonoBehaviour
 
     void Start()
     {
-
+        audioSource.PlayOneShot(SpawnSound);
         spawner = GetComponentInParent<Spawn_Cow>();
         currentHealth = maxHealth;
         healthSlider.maxValue = maxHealth;

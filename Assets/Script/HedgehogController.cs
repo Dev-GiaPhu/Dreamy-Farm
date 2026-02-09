@@ -5,6 +5,8 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody2D))]
 public class HedgehogController : MonoBehaviour
 {
+    public AudioSource audioSource;
+    public AudioClip spawnSound;
     [Header("Thông tin")]
     public string hedgehogName = "Nhím";
     public float maxHealth = 3f;
@@ -36,6 +38,7 @@ public class HedgehogController : MonoBehaviour
 
     void Start()
     {
+        audioSource.PlayOneShot(spawnSound);
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 

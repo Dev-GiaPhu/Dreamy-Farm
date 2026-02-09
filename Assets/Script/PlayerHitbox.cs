@@ -53,6 +53,7 @@ public class PlayerHitBox : MonoBehaviour
             if (tree != null)
             {
                 tree.TakeHit();
+                player.audioSource.PlayOneShot(player.soundPickaxe);
                 Debug.Log("Đá bị chặt!");
                 StartCoroutine(WaitOff());
             }
@@ -65,6 +66,7 @@ public class PlayerHitBox : MonoBehaviour
             if (cow != null)
             {
                 cow.TakeHit();
+                player.audioSource.PlayOneShot(player.hitSound);
                 Debug.Log("Con bò bị đánh!");
                 StartCoroutine(WaitOff());
             }
@@ -76,6 +78,7 @@ public class PlayerHitBox : MonoBehaviour
             if (nhim != null)
             {
                 nhim.TakeHit();
+                player.audioSource.PlayOneShot(player.hitSound);
                 Debug.Log("Nhím bị đánh!");
                 StartCoroutine(WaitOff());
             }
